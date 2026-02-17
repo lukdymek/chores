@@ -41,7 +41,8 @@ python manage.py runserver
    - `CSRF_TRUSTED_ORIGINS` = `https://your-domain.up.railway.app`
 4. Deploy.
 
-Railway uses `Procfile` (`gunicorn chores_project.wsgi`).
+Railway uses `Procfile` and runs migrations before startup:
+`python manage.py migrate --noinput && gunicorn chores_project.wsgi`
 
 ## Note on uploads
 Task photos are stored in `/media`. With SQLite and local disk, uploaded files are not durable if Railway restarts or redeploys. Later, move media storage to cloud object storage (for example S3-compatible) for persistence.
