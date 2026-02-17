@@ -7,7 +7,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me-in-production')
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-allowed_hosts = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost')
+import os
+
+ALLOWED_HOSTS = [
+    "chores-production-cbff.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
+
+# Optional but handy on Railway if your domain changes:
+railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if railway_domain:
+    ALLOWED_HOSTS.append(railway_domain)
+
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(',') if host.strip()]
 
 csrf_trusted = os.getenv('CSRF_TRUSTED_ORIGINS', '')
