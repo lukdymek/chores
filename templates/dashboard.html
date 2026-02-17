@@ -1,0 +1,67 @@
+﻿{% extends "base.html" %}
+{% load chores_extras %}
+
+{% block content %}
+<form method="get" class="card" style="margin-bottom:16px;">
+    <label for="day">Show chores for day:</label>
+    <input id="day" name="day" type="date" value="{{ today|date:'Y-m-d' }}">
+    <button class="btn" type="submit">Filter</button>
+</form>
+
+{% if is_lukas_admin %}
+<div class="card admin-form">
+    <h2>Add chore (Lukas only)</h2>
+    <form method="post" action="{% url 'add_task' %}">
+        {% csrf_token %}
+        {{ task_form.as_p }}
+        <button class="btn btn-primary" type="submit">Add task</button>
+    </form>
+</div>
+{% endif %}
+
+<div class="grid">
+    {% for user in users %}
+    <div class="card">
+        <h3>{{ user.first_name|default:user.username }}</h3>
+        {% for task in tasks_by_user|get_item:user %}
+            <div class="task-item">
+                <form method="post" action="{% url 'toggle_task' task.id %}" style="margin-bottom:8px;">
+                    {% csrf_token %}
+                    <button class="btn" type="submit">{% if task.is_completed %}Undo{% else %}Done{% endif %}</button>
+                    <span class="{% if task.is_completed %}done{% endif %}">{{ task.title }}</span>
+                </form>
+
+                {% if task.description %}<div class="small">{{ task.description }}</div>{% endif %}
+
+                {% if task.photos.all %}
+                <div class="photo-grid">
+                    {% for photo in task.photos.all %}
+                        <a href="{{ photo.image.url }}" target="_blank" rel="noopener noreferrer">
+                            <img src="{{ photo.image.url }}" alt="Task photo" class="task-photo">
+                        </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if task.is_completed %}
+                    {% if request.user == task.assigned_to or is_lukas_admin %}
+                        {% if task.photos.count < 3 %}
+                        <form method="post" action="{% url 'upload_task_photos' task.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="file" name="photos" accept="image/*" capture="environment">
+                            <button class="btn btn-primary" type="submit">Upload proof</button>
+                            <div class="small">Up to 3 photos per task ({{ task.photos.count }}/3 used). Upload one photo at a time on mobile.</div>
+                        </form>
+                        {% else %}
+                        <div class="small">Photo limit reached (3/3).</div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="small">No chores for this day.</p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

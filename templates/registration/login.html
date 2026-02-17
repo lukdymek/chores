@@ -1,0 +1,13 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="card" style="max-width:420px;margin:50px auto;">
+    <h2>Login</h2>
+    <p class="small">Default passwords are set to username + 12345 (change after first login).</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+</div>
+{% endblock %}

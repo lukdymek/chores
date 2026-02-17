@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Family Chores</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f7f7f7; margin:0; }
+        .wrap { max-width: 1100px; margin: 16px auto; padding: 0 12px; }
+        .topbar { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+        .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:12px; }
+        .card { background:white; border-radius:10px; padding:14px; box-shadow:0 1px 5px rgba(0,0,0,0.08); }
+        .task-item { border-top:1px solid #e7e7e7; padding:10px 0; }
+        .done { text-decoration: line-through; color:#6e6e6e; }
+        .messages { margin: 10px 0; padding:0; }
+        .messages li { list-style:none; background:#e9f7ef; margin:6px 0; padding:8px; border-radius:6px; }
+        .btn { cursor:pointer; border:1px solid #d4d4d4; border-radius:8px; background:#fff; padding:9px 12px; min-height: 42px; }
+        .btn-primary { background:#1f7aec; color:#fff; border-color:#1f7aec; }
+        .admin-form { margin-bottom:16px; }
+        input, textarea, select { width:100%; margin:4px 0 10px; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; }
+        .small { font-size: 0.9rem; color:#666; }
+        .photo-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; margin:8px 0; }
+        .task-photo { width:100%; height:88px; object-fit:cover; border-radius:8px; border:1px solid #ddd; }
+
+        @media (max-width: 640px) {
+            .wrap { margin: 10px auto; padding: 0 8px; }
+            .grid { grid-template-columns: 1fr; }
+            .task-photo { height: 100px; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="topbar">
+        <h1>Family Chores</h1>
+        <div>
+            <span class="small">Logged in as {{ request.user.first_name|default:request.user.username }}</span>
+            <form style="display:inline" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
